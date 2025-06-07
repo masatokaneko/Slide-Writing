@@ -1,0 +1,199 @@
+/* ベース設定 */
+:root {
+    --bcg-blue: #0070C0;
+    --bcg-orange: #FFC000;
+    --bg-white: #FFFFFF;
+    --bg-light: #F8F9FA;
+    --text-dark: #212529;
+    --border-light: #DEE2E6;
+    --shadow: 0 2px 10px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: 'Yu Gothic', '游ゴシック', 'Meiryo', 'メイリオ', sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background: var(--bg-light);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* コンテナ */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+    background: var(--bg-white);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+/* ヘッダー */
+h1 {
+    color: var(--bcg-blue);
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+/* テキストエリア */
+textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 1.2rem;
+    font-size: 1.1rem;
+    border: 2px solid var(--border-light);
+    border-radius: 8px;
+    resize: vertical;
+    font-family: inherit;
+    background: var(--bg-white);
+    transition: var(--transition);
+    margin-bottom: 1.5rem;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--bcg-blue);
+    box-shadow: 0 0 0 3px rgba(0,112,192,0.1);
+}
+
+/* 文字数カウンター */
+.char-counter {
+    text-align: right;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+    margin-top: -1rem;
+    margin-bottom: 1rem;
+}
+
+/* ボタン */
+.generate-btn {
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, var(--bcg-blue), var(--bcg-orange));
+    color: var(--bg-white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: var(--transition);
+    margin-bottom: 1.5rem;
+}
+
+.generate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,112,192,0.2);
+}
+
+.generate-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* プログレスバー */
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background: var(--border-light);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    display: none;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--bcg-blue), var(--bcg-orange));
+    transition: width 0.3s ease;
+}
+
+/* ステータスメッセージ */
+.status {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: none;
+}
+
+.status.error {
+    background: #FFEBEE;
+    color: #C62828;
+    border: 1px solid #FFCDD2;
+    display: block;
+}
+
+.status.success {
+    background: #E8F5E9;
+    color: #2E7D32;
+    border: 1px solid #C8E6C9;
+    display: block;
+}
+
+/* ダウンロードリンク */
+.download-link {
+    text-align: center;
+    margin-top: 2rem;
+    display: none;
+}
+
+.download-link a {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: var(--bcg-blue);
+    color: var(--bg-white);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: var(--transition);
+}
+
+.download-link a:hover {
+    background: #005999;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,112,192,0.2);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    textarea {
+        min-height: 150px;
+    }
+    
+    .generate-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
+    }
+}
+
+/* Windows ClearType最適化 */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    body {
+        text-rendering: optimizeLegibility;
+    }
+} 

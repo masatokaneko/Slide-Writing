@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCG スライドジェネレーター</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: 'Yu Gothic', '游ゴシック', 'Meiryo', 'メイリオ', sans-serif;
+            background: #f5f7fa;
+        }
+        .container {
+            max-width: 700px;
+            margin: 2rem auto;
+            padding: 2.5rem 2rem;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #0070C0;
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            letter-spacing: 0.05em;
+        }
+        textarea {
+            width: 100%;
+            min-height: 260px;
+            font-size: 1.1rem;
+            padding: 1.2rem;
+            border: 1.5px solid #b0c4de;
+            border-radius: 8px;
+            resize: vertical;
+            font-family: inherit;
+            background: #fafdff;
+            margin-bottom: 1.2rem;
+        }
+        .generate-btn {
+            width: 100%;
+            padding: 1.1rem;
+            font-size: 1.2rem;
+            background: linear-gradient(90deg, #0070C0 60%, #FFC000 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            transition: background 0.2s, opacity 0.2s;
+        }
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e7ef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1.2rem;
+            display: none;
+        }
+        .progress-bar-inner {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #0070C0 60%, #FFC000 100%);
+            transition: width 0.8s;
+        }
+        .status {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+            display: none;
+        }
+        .status.error {
+            color: #c62828;
+            background: #ffebee;
+            border-radius: 4px;
+            padding: 0.7rem 1rem;
+            display: block;
+        }
+        .status.success {
+            color: #2e7d32;
+            background: #e8f5e9;
+            border-radius: 4px;
+            padding: 0.7rem 1rem;
+            display: block;
+        }
+        .download-link {
+            display: none;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .download-link a {
+            display: inline-block;
+            font-size: 1.3rem;
+            background: #0070C0;
+            color: #fff;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,112,192,0.08);
+            transition: background 0.2s;
+        }
+        .download-link a:hover {
+            background: #005999;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem 0.5rem;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
+            .download-link a {
+                font-size: 1rem;
+                padding: 0.7rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BCG スライドジェネレーター</h1>
+        <textarea id="content" placeholder="新規事業として、中小企業向けのAI経理システムを提案したい。
+
+【現状分析】
+- 市場規模：500億円（年成長率8%）
+- ターゲット：従業員50-300名の中小企業
+- 課題：手動経理による人件費増大、ミスの多発
+
+【競合状況】
+- 既存サービス：弥生会計、マネーフォワード、freee
+- 我々の差別化：AI自動仕訳、直感的UI、低価格
+
+【提案ソリューション】
+- AI自動仕訳機能による作業時間70%削減
+- 専門知識不要の直感的インターフェース
+- 月額9,800円の競争力ある価格設定
+
+【事業計画】
+- 1年目：100社導入、売上1,200万円
+- 3年目：1,000社導入、売上1.2億円
+- 5年目：3,000社導入、売上3.6億円
+- 初期投資：システム開発2,000万円
+
+【リスクと対策】
+- 技術リスク：AI精度向上への継続投資
+- 競合リスク：独自機能による差別化戦略
+
+【次のステップ】
+- システム開発開始：6ヶ月
+- β版テスト：3ヶ月（50社限定）
+- 本格サービス開始：来年4月
+- 承認事項：開発予算2,000万円の承認"></textarea>
+        <button id="generate" class="generate-btn">スライドを生成</button>
+        <div class="progress-bar" id="progress-bar">
+            <div class="progress-bar-inner" id="progress-bar-inner"></div>
+        </div>
+        <div id="status" class="status"></div>
+        <div class="download-link" id="download-link">
+            <a id="download-a" href="#" download>生成されたスライドをダウンロード</a>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+    // 進捗バーとダウンロードリンク制御
+    const generateBtn = document.getElementById('generate');
+    const progressBar = document.getElementById('progress-bar');
+    const progressBarInner = document.getElementById('progress-bar-inner');
+    const statusDiv = document.getElementById('status');
+    const downloadLinkDiv = document.getElementById('download-link');
+    const downloadA = document.getElementById('download-a');
+    const textarea = document.getElementById('content');
+
+    function showProgress(percent) {
+        progressBar.style.display = 'block';
+        progressBarInner.style.width = percent + '%';
+    }
+    function hideProgress() {
+        progressBar.style.display = 'none';
+        progressBarInner.style.width = '0%';
+    }
+    function showStatus(msg, type) {
+        statusDiv.textContent = msg;
+        statusDiv.className = 'status ' + (type || '');
+        statusDiv.style.display = 'block';
+    }
+    function hideStatus() {
+        statusDiv.textContent = '';
+        statusDiv.className = 'status';
+        statusDiv.style.display = 'none';
+    }
+    function showDownload(url, filename) {
+        downloadA.href = url;
+        downloadA.download = filename;
+        downloadLinkDiv.style.display = 'block';
+    }
+    function hideDownload() {
+        downloadA.href = '#';
+        downloadLinkDiv.style.display = 'none';
+    }
+
+    generateBtn.addEventListener('click', async () => {
+        const content = textarea.value.trim();
+        if (!content) {
+            showStatus('内容を入力してください。', 'error');
+            return;
+        }
+        generateBtn.disabled = true;
+        hideDownload();
+        showProgress(30);
+        showStatus('AIがスライド構成を生成中です…', '');
+        try {
+            const response = await fetch('/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            });
+            showProgress(70);
+            const result = await response.json();
+            if (result.status === 'success') {
+                showProgress(100);
+                showStatus('スライド生成が完了しました！', 'success');
+                showDownload(result.download_url, result.filename);
+            } else {
+                hideDownload();
+                showStatus(result.message || 'スライド生成に失敗しました。', 'error');
+                hideProgress();
+            }
+        } catch (e) {
+            hideDownload();
+            showStatus('通信エラーが発生しました。', 'error');
+            hideProgress();
+        } finally {
+            generateBtn.disabled = false;
+            setTimeout(hideProgress, 1200);
+        }
+    });
+    </script>
+</body>
+</html> 
