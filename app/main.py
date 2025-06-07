@@ -32,7 +32,7 @@ def generate_slide():
 
         # スライド構造生成
         slide_structure = generate_slide_structure(content)
-
+        print(slide_structure)
         # ファイル名生成（UUIDで一意化）
         filename = f"presentation_{uuid.uuid4().hex}.pptx"
         output_path = DATA_DIR / filename
@@ -68,6 +68,6 @@ def download_file(filename):
 # 追加: アプリケーションの起動部分
 if __name__ == '__main__':
     from flask import Flask
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='../templates', static_folder='../static')
     app.register_blueprint(main)
     app.run(debug=True, host='0.0.0.0', port=5000) 
